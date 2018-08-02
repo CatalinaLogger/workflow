@@ -1,0 +1,16 @@
+{
+  "contentPageType": [
+    {
+      "value": "0",
+      "text": "分享文章"
+    },
+    {
+      "value": "1",
+      "text": "推广指南"
+    },
+    {
+      "value": "2",
+      "text": "店铺指南"
+    }
+  ]
+}

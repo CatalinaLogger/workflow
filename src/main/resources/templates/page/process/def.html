@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>审核列表</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/hplus/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/hplus/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link rel="stylesheet" href="/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/plugins/iCheck/square/green.css">
+    <!-- jqgrid-->
+    <link href="/hplus/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/hplus/css/plugins/jqgrid/ui.jqgrid.css?0820" rel="stylesheet">
+    <link href="/hplus/css/animate.css" rel="stylesheet">
+    <link href="/hplus/css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="/plugins/bootstrap-slider/fileinput.css">
+    <style>
+        .ui-jqgrid .ui-jqgrid-htable thead th div {
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+        }
+
+        i {
+            margin-right: 5px;
+        }
+        .ui-jqgrid .ui-jqgrid-htable thead th div {
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox ">
+                <div class="ibox-content">
+                    <form class="form-horizontal m-t" id="form_search" >
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label" style="display: none">关键词：</label>
+                            <div class="col-sm-2" style="display: none">
+                                <input id="keyWord" name="keyWord" placeholder="关键词" value="" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">礼包名称：</label>
+                            <div class="col-sm-2">
+                                <input id="name" name="name" placeholder="礼包名称" value="" class="form-control">
+                            </div>
+                            <div class="radio col-sm-2">
+                                <div class="input-group">
+                                    <input type="checkbox" value="1" id="sortBySellCount">
+                                    <label for="sortBySellCount">按销量排序</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-2" style="float: right;margin-right: 2px;">
+                                <button  onclick="edit('')" class="btn  btn-lg btn-warning" type="button" >添加模板</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-1 control-label" style="width: 100px;">创建时间：</label>
+                                <div class="input-group">
+                                    <input type="text" class="laydate-icon form-control layer-date" id="startDay"
+                                           name="startDay" placeholder="开始时间" value=""/>
+                                    <span class="input-group-addon">至</span>
+                                    <input type="text" class="laydate-icon form-control layer-date" id="endDay"
+                                           name="endDay" placeholder="结束时间" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <label class="col-sm-2 control-label">状态：</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" id="queryByType">
+                                        <option value="0">请选择</option>
+                                        <option value="1">未提交</option>
+                                        <option value="2">待审核</option>
+                                     <!--   <option value="3">已通过</option>-->
+                                        <option value="4">已驳回</option>
+                                        <option value="5">已上架</option>
+                                        <option value="6">已下架</option>
+                                        <option value="7">已售罄</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="float: right;margin-right: 18px;">
+                                <button type="button" class="btn btn-sm btn-primary " onclick="queryData();">查询</button>
+
+                                <button type="button" class="btn btn-sm btn-info" onclick="reset();">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="jqGrid_wrapper">
+                        <table id="table_list_1"></table>
+                        <div id="pager_list_1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<!-- 全局js -->
+<script src="/hplus/js/jquery.min.js?v=2.1.4"></script>
+<script src="/hplus/js/bootstrap.min.js?v=3.3.6"></script>
+<!-- Peity -->
+<script src="/hplus/js/plugins/peity/jquery.peity.min.js"></script>
+<!-- jqGrid -->
+<script src="/hplus/js/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+<script src="/hplus/js/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+<script src="/plugins/iCheck/icheck.js"></script>
+
+<!-- 自定义js -->
+<script src="/hplus/js/content.js?v=1.0.0"></script>
+<script src="/hplus/js/plugins/layer/laydate/laydate.js"></script>
+<!-- Sweet alert -->
+<script src="/hplus/js/plugins/sweetalert/sweetalert.min.js"></script>
+<script src="/hplus/js/plugins/layer/layer.min.js"></script>
+<script type="text/javascript" src="/plugins/swiper/fileinput.js"></script>
+<script type="text/javascript" src="/plugins/swiper/fileinput_locale_zh.js"></script>
+<script src="/plugins/moment/moment.js"></script>
+
+<!-- Page-Level Scripts -->
+<script type="text/javascript" th:inline="javascript">
+
+    $(document).ready(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square',
+            radioClass: 'iradio_square-green',
+            increaseArea: '20%' // optional
+        });
+
+        $.jgrid.defaults.styleUI = 'Bootstrap';
+        $("#table_list_1").jqGrid({
+            datatype: "json",
+            url: "platformGiftPackageList", //这是数据的请求地址
+            mtype: "POST",
+            postData: {},
+            height: "100%",
+            autowidth: true,
+            shrinkToFit: true,
+            autoScroll: false,
+            jsonReader: {
+                root: "rows",//数据模型
+                page: "page",//数据页码
+                total: "totalPage",  //数据总页码
+                records: "totalResult",//数据总记录数
+                userdata: "userdata",//数据总记录数
+                repeatitems: false,
+                id: "id"
+            },
+            rowNum: 10,
+            rowList: [10, 20, 50],
+            colModel: [
+                {
+                    label: '名称', name: 'name', index: 'name', align: 'center'
+                },
+                {
+                    label: '创建时间', name: 'create_time', index: 'create_time', align: 'center',
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue) {
+                            return moment(cellvalue).format('YYYY-MM-DD HH:mm:ss')
+                        }
+                        return cellvalue;
+                    }
+                },
+                {
+                    label: '状态', name: 'status', index: 'status',
+                    align: 'center',
+                    formatter: function (cellvalue, options, rowObject) {
+                        if (cellvalue == 0 ||cellvalue ==4 ) {
+                            return '待审核';
+                        }
+                        if (cellvalue == 1) {
+                            if (rowObject.isout == 0) {
+                                if (rowObject.storenum == 0) {
+                                    return "已售罄";
+                                }
+                                return "已上架"
+                            } else if (rowObject.isout == 1) {
+                                return "已下架"
+                            }
+                            return '已通过'
+                        }
+                        if (cellvalue == 2) {
+                            //var viewBtn = "&nbsp;&nbsp;<button class='btn btn-xs btn-rounded  btn-danger tiple' style='margin-top: 5px' type='button'  onclick='lookCheckInfo("+'"'+ rowObject.id+'"'+")'>&nbsp;已驳回</button>&nbsp;&nbsp;";
+                            return "已驳回";
+                        }
+                        if (cellvalue == 3) {
+                            return '未提交';
+                        }
+                        return "";
+                    }
+                },
+                {
+                    label: '库存剩余', name: 'storenum', index: 'storenum', align: 'center'
+                }, {
+                    label: '销量', name: 'sell_count', index: 'sell_count', align: 'center'
+                },
+                {label: '操作', name: '', index: '', title: false, formatter: opratorFmatter, width: 350, align: 'center'}
+            ],
+            onPaging: function (pgButton) {      //当点击翻页按钮但还为展现数据时触发此事件, 当然这跳转栏输入页
+                //码改变页时也同样触发此事件
+                jQuery("#table_list_1").jqGrid("setGridParam", {}, {url: 'platformGiftPackageList'});
+            },
+            pager: "#pager_list_1",
+            viewrecords: true,
+            rownumbers: true,
+            hidegrid: false,
+            gridComplete: function () {
+                //当表格所有数据都加载完成，处理统计行数据
+            }
+        });
+
+        $(window).bind('resize', function () {
+            var width = $('.jqGrid_wrapper').width();
+            $('#table_list_1').setGridWidth(width);
+        });
+
+        //日期范围限制
+        var start_xd = {
+            elem: '#startDay',
+            format: 'YYYY-MM-DD hh:MM:ss',
+            //min: laydate.now(), //设定最小日期为当前日期
+            max: '2099-06-16', //最大日期
+            istime: true,
+            istoday: false,
+            choose: function (datas) {
+                end_xd.min = datas; //开始日选好后，重置结束日的最小日期
+                end_xd.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+        var end_xd = {
+            elem: '#endDay',
+            format: 'YYYY-MM-DD hh:MM:ss',
+            //min: laydate.now(),
+            max: '2099-06-16',
+            istime: true,
+            istoday: false,
+            choose: function (datas) {
+                start_xd.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+        laydate(start_xd);
+        laydate(end_xd);
+
+    });
+
+    function queryData() {
+        var keyWord = $('#keyWord').val();
+        var name = $('#name').val();
+        var startDay = $("#startDay").val();
+        var endDay = $("#endDay").val();
+        var sortBySellCount = $('#sortBySellCount').is(':checked')
+        var queryType = $('#queryByType').val()
+
+        $("#table_list_1").jqGrid('setGridParam', {
+            datatype: 'json',
+            postData: {
+                'startDay': startDay
+                , 'endDay': endDay
+                , keyWord: keyWord
+                , name: name
+                , queryType: queryType
+                , sortBySellCount: sortBySellCount
+            },
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function reloadData() {
+        $("#table_list_1").jqGrid().trigger("reloadGrid");
+    }
+
+    // Add responsive to jqGrid
+    $(window).bind('resize', function () {
+        var width = $('.jqGrid_wrapper').width();
+        $('#table_list_1').setGridWidth(width);
+    });
+
+
+    function opratorFmatter(cellvalue, options, rowObject) {
+
+        var viewBtn = "";
+        //
+        if((rowObject.status==0 ||rowObject.status== 4|| (rowObject.status == 1 &&rowObject.isout == 0 ))||(rowObject.status==1&&rowObject.isout==-1)) {
+            //btn btn-info btn-circle
+            viewBtn = viewBtn + "&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-default\" type=\"button\"   style='margin-top: 5px'  onclick=\"viewInfo('" + rowObject.id + "')\">查看</button>&nbsp;&nbsp;<br>" +
+                    "&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-info\" type=\"button\"   style='margin-top: 5px' onclick='changeStorenum(" + '"' + rowObject.id + '"'
+                    + ","+ rowObject.storenum +")'><i class=\"fa fa-edit\"></i>&nbsp;库存修改</button>&nbsp;&nbsp;<br>"
+            return viewBtn;
+        }
+     /*   var checkBtn = "&nbsp;<button class='btn btn-xs btn-outline btn-primary' style='margin-top: 5px' type='button'  onclick='commitAudit(" + '"' + rowObject.id + '"' + ")'><i class='fa fa-check'></i>提交审核</button>&nbsp;<br>";
+        if (rowObject.status != 0 && rowObject.status != 1) {
+            viewBtn += checkBtn;
+        }*/
+
+        //下架
+        if(rowObject.isout == 1){
+            viewBtn = viewBtn+"&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-info\" type=\"button\"  style='margin-top: 5px'  onclick='edit(" + '"' + rowObject.id + '"' + ")'><i class=\"fa fa-edit\"></i>&nbsp;修改</button>&nbsp;&nbsp;<br>"+
+                    "&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-success\" type=\"button\"  style='margin-top: 5px' onclick='changeStorenum(" + '"' + rowObject.id + '"'
+                    + ","+ rowObject.storenum +")'><i class=\"fa fa-edit\"></i>&nbsp;库存修改</button>&nbsp;&nbsp;<br>"+
+                    "&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-danger\" type=\"button\"  style='margin-top: 5px' onclick='remove(" + '"' + rowObject.id + '"' + ")'><i class=\"fa fa-edit\"></i>&nbsp;删除</button>&nbsp;&nbsp;<br>"
+            return viewBtn;
+        }
+        //驳回或者未提交
+        if(rowObject.status==3 || rowObject.status ==2){
+            viewBtn = viewBtn+"&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-info\" type=\"button\"  style='margin-top: 5px'  onclick='edit(" + '"' + rowObject.id + '"' + ")'><i class=\"fa fa-edit\"></i>&nbsp;修改</button>&nbsp;&nbsp;<br>"+
+                    "&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-success\" type=\"button\"  style='margin-top: 5px' onclick='changeStorenum(" + '"' + rowObject.id + '"'
+                    + ","+ rowObject.storenum +")'><i class=\"fa fa-edit\"></i>&nbsp;库存修改</button>&nbsp;&nbsp;<br>"+
+                    "&nbsp;&nbsp;<button class=\"btn btn-xs btn-outline btn-danger\" type=\"button\"  style='margin-top: 5px' onclick='remove(" + '"' + rowObject.id + '"' + ")'><i class=\"fa fa-edit\"></i>&nbsp;删除</button>&nbsp;&nbsp;<br>"
+
+        }
+        if(rowObject.status==2){
+            var viewBtn1 = "&nbsp;&nbsp;<button class='btn btn-xs btn-rounded  btn-danger tiple' style='margin-top: 5px' type='button' id='a"+rowObject.id+"'  onclick='lookCheckInfo("+'"'+ rowObject.id+'"'+")'>&nbsp;驳回原因</button>&nbsp;&nbsp;";
+            viewBtn =viewBtn+viewBtn1;
+        }
+        return viewBtn;
+    }
+
+    function commitAudit(id) {
+        var index = layer.confirm('确定提交审核大礼包?', function () {
+            $.ajax({
+                url: '/giftPackage/commitAudit',
+                data: {id: id},
+                type: 'POST',
+                success: function (res) {
+                    if (res.result) {
+                        reloadData();
+                        layer.alert(res.message, {icon: 1})
+                    } else {
+                        layer.alert(res.message, {icon: 2})
+                    }
+                }
+            })
+        })
+    }
+
+    function changeStorenum(id,storenum) {
+        var html = '<div style="width: 400px;"><form class="form-horizontal m-t">' +
+            '<div class="form-group"><lable class="col-sm-3 control-label">库存：</lable><div class="col-sm-9"><input class="form-control" id="remsg" value="'+storenum+'"/></div>' +
+            '</div></form></div>';
+        var index = layer.open({
+            title: '修改库存'
+            , type: 1
+            , btn: ['确认', '取消']
+            , closeBtn: 0
+            , scrollbar: false
+            , area: ['450px', '200px']
+            , content: html
+            , yes: function (index, layero) {
+                var storenum = $("#remsg").val();
+                if (!storenum) {
+                    layer.msg('请填写库存', {icon: 2});
+                    return false;
+                }
+                var reg = /^\+?[1-9]\d*$/;
+                //
+                if(!reg.test(storenum)){
+                    layer.msg('库存只能是大于0的整数', {icon: 2});
+                    return false;
+                }
+                $.ajax({
+                    url: '/giftPackage/changeStorenum',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        storenum: storenum
+                    },
+                    success: function (res) {
+                        if (res.result) {
+                            reloadData();
+                            layer.alert(res.message, {icon: 1})
+                            layer.close(index)
+                        } else {
+                            layer.alert(res.message, {icon: 2})
+                        }
+                    }
+                })
+            }
+            , btn2: function (index, layero) {
+                layer.closeAll();
+            }
+        });
+    }
+
+    function rejectInfo(id) {
+        alert("驳回信息")
+    }
+
+    function lookCheckInfo(id) {
+        var messa = "";
+        $.ajax({
+            url: '/packageCheck/getCheckRejectInfo',
+            data:{'proId':id},
+            dataType: "json",
+            async: false,
+            success: function (res) {
+                if(res.result==1){
+                    messa = res.data.remark;
+                }else {
+                    messa = res.message;
+                }
+                layer.tips(messa, '#a'+id, {
+                    area: ['auto', 'auto'],
+                    tips: [1, '#0FA6D8'] //还可配置颜色
+                });
+            }
+        })
+
+    }
+
+
+
+
+    function add() {
+        var index = layer.open({
+            type: 2,
+            title: '流程添加',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['800px', '450px'],
+            content: "/giftPackage/supplyEditPage"
+        })
+        layer.full(index);
+        return false;
+    }
+
+    function edit(id) {
+        var index = layer.open({
+            type: 2,
+            title: '大礼包' + (id ? "编辑" : '添加'),
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['800px', '450px'],
+            content: "/modler/index.html#/processes"
+        })
+        layer.full(index)
+    }
+
+    function remove(id) {
+        var index = layer.confirm('确定删除大礼包?', function () {
+            $.ajax({
+                url: '/giftPackage/removeGiftPackage',
+                data: {id: id},
+                type: 'POST',
+                success: function (res) {
+                    if (res.result) {
+                        reloadData();
+                        layer.alert(res.message, {icon: 1})
+                    } else {
+                        layer.alert(res.message, {icon: 2})
+                    }
+                }
+            })
+        })
+    }
+
+    //导出excal
+    function toExcel() {
+        var params = $("#form_").serialize();
+        //window.location.href = "/send/outOrderExcel?" + params
+    }
+   function viewInfo(id) {
+        var index = layer.open({
+            type: 2,
+            title: '大礼包' + (id ? "查看" : '添加'),
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['800px', '450px'],
+            content: "/giftPackage/supplyEditPage" + (id ? ('?id=' + id+'&flag=2') : '')
+        })
+        layer.full(index)
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!-- <%@ page contentType="text/html;charset=UTF-8" language="java"%> -->
+<!-- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> -->
+<!-- <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/ztree/css/zTreeStyle/zTreeStyle.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<style>
+	textarea{
+		width:100%;
+		height:100px;
+	}
+	
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+
+.chk_1{
+    display: none;
+}
+.chk_1 + label {
+	background-color: #FFF;
+	border: 1px solid #C1CACA;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+	padding: 9px;
+	border-radius: 5px;
+	display: inline-block;
+	position: relative;
+	margin-right: 30px;
+}
+.chk_1 + label:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+.chk_1:checked + label {
+	background-color: #ECF2F7;
+	border: 1px solid #92A1AC;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+	color: #243441;
+}
+
+.chk_1:checked + label:after {
+	content: '\2714';
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	color: #758794;
+	width: 100%;
+	text-align: center;
+	font-size: 1.4em;
+	padding: 1px 0 0 0;
+	vertical-align: text-top;
+}
+div.cbp label.font{
+	text-align: center;
+	font-size: 1.4em;
+	vertical-align: text-top;
+	margin-top: -15px;
+	margin-left: -10px;
+}
+
+.h-title{
+	margin-top: 30px;
+    padding: 0 20px;
+    text-align: center;
+    font-size: 36px;
+    color: #404040;
+    font-weight: 600;
+}
+.h-info {
+	margin-top: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: #B3B3B3;
+}
+.h-time {
+    margin-right: 20px;
+}
+</style>
+<style type="text/css">
+    div{
+        width:100%;
+    }
+</style>
+</head>
+<body>
+<!-- Content Header (Page header) -->
+<section class="content-header"  style="height: 50px;">
+  <h1></h1>
+  <ol class="breadcrumb" >
+    <li><a href="#"><i class="fa fa-dashboard"></i> 分享管理</a></li>
+    <li class="active">分享内容预览</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	<div class="box">
+		<div class="modal-footer">
+			<button id="goback1" type="button" class="btn btn-primary"  onclick="goback()" >返回</button>
+	 	</div>
+	 	<div id="titleDiv" class="h-title"></div>
+	 	<div class="h-info">
+	 		<span class="h-time" id="timeSpan"></span>
+	 	</div>
+	 	<div></div>
+		<div id="contentDiv">
+		</div>
+    </div>
+	<input type="hidden" name="title" id='title' th:value="${title}" />
+	<input type="hidden" name="createTime" id='createTime' th:value="${createTime}" />
+	<input type="hidden" name="content" id='content' th:value="${content}" />
+</section>
+
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>	
+</body>
+
+<script type="text/javascript">
+$(function () {
+	$("#titleDiv").append($("#title").val());
+	$("#timeSpan").append($("#createTime").val());
+	$("#contentDiv").append($("#content").val());
+});
+
+function goback(){
+    window.location.href="/contentpage/contentpageListIndex";
+}
+</script>
+</html>

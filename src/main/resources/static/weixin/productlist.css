@@ -1,0 +1,129 @@
+@charset "UTF-8";
+* {
+  padding: 0;
+  margin: 0;
+  font-size: 15px;
+  font-family: "微软雅黑"; }
+
+em, i, b, h1, h2, h3, h4, h5, h6, dd, dl, dt, ul, li, div {
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-weight: normal;
+  font-style: normal; }
+
+a {
+  text-decoration: none;
+  color: black;
+  outline: none; }
+
+a:focus, a:hover {
+  text-decoration: none; }
+
+.l {
+  float: left; }
+
+.r {
+  float: right; }
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  visibility: hidden;
+  clear: both; }
+
+.container-fluid, .col-md-4 {
+  margin: 0 auto;
+  padding: 0; }
+
+input:focus {
+  outline: none; }
+
+html {
+  font-size: 62.5%;
+  /*10 ÷ 16 × 100% = 62.5%*/ }
+
+body {
+  font-size: 1.4rem;
+  /*1.4 × 10px = 14px */ }
+
+/* h1 {
+  font-size: 2.4rem;
+  2.4 × 10px = 24px } */
+.bigegg {
+  width: 100%;
+  max-width: 41.4rem;
+  margin: 0 auto;
+  padding: 20px 15px 15px;
+  background-color: #fff; }
+  .bigegg h1 {
+    margin-bottom: 10px;
+    line-height: 1.4;
+    font-weight: 400;
+    font-size: 24px; }
+  .bigegg h1 + p {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    margin-bottom: 18px;
+    line-height: 20px;
+    color: #8c8c8c; }
+    .bigegg h1 + p em {
+      margin-left: 8px; }
+  .bigegg p + img {
+    width: 100%;
+    margin: 10px 0; }
+  .bigegg .bigbox {
+    width: 100%; }
+    .bigegg .bigbox dl {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px dashed #d81e0a;
+      padding: 15px 0; }
+      .bigegg .bigbox dl dt {
+        overflow: hidden;
+        padding: 0px;
+        width: 54%;
+        box-shadow: black 0px 0px 0px;
+        vertical-align: middle;
+        border-width: 0px;
+        border: 1px solid #f96e57; }
+        .bigegg .bigbox dl dt img {
+          width: 100%; }
+      .bigegg .bigbox dl dd {
+        padding: 0px 0px 0px 3px;
+        border-width: 0px;
+        border-radius: 0px;
+        width: 46%;
+        box-shadow: black 0px 0px 0px;
+        vertical-align: middle;
+        text-align: center; }
+        .bigegg .bigbox dl dd p {
+          color: black;
+          font-size: 18px;
+          line-height: 1.8;
+          font-weight: bold;
+          margin-bottom: 5px; }
+        .bigegg .bigbox dl dd p + span {
+          display: inline-block;
+          line-height: 22px; }
+        .bigegg .bigbox dl dd span + i {
+          display: block;
+          color: #d81e0a;
+          font-size: 17px;
+          font-weight: bolder; }
+          .bigegg .bigbox dl dd span + i em {
+            color: #d81e0a;
+            font-size: 31px; }
+        .bigegg .bigbox dl dd button {
+          display: block;
+          border-radius: 1em;
+          background-color: #d81e0a;
+          padding: 4px 25px;
+          color: white;
+          font-size: 18px;
+          border: none;
+          font-weight: bold;
+          margin: auto;
+          margin-top: 8px; }

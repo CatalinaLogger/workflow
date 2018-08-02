@@ -1,0 +1,14 @@
+#con_tel {
+  width: 77%;
+  min-width: 327px;
+  margin: 0 auto; }
+  #con_tel img {
+    display: block;
+    margin: 0 auto;
+    width: 311px; }
+  #con_tel p {
+    font-size: 14px;
+    color: #1D1D1D;
+    line-height: 20px; }
+  #con_tel .first {
+    margin-bottom: 38px; }

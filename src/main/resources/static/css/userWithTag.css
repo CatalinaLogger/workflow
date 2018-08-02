@@ -1,0 +1,81 @@
+.modal-header {
+    background: #ecf0f1; }
+.modal-header .close {
+    margin-top: 0px !important; }
+.modal-header h4 {
+    line-height: normal !important;
+    border-bottom: none !important;
+    font-size: 16px !important; }
+
+.modal-body {
+    font-size: 16px;
+    color: #333; }
+.modal-body center {
+    width: 100%;
+    text-align: left;
+    margin-top: 3%;
+    margin-bottom: 5%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block; }
+.modal-body select {
+    width: 100%;
+    height: 200px}
+.modal-body select option {
+    height: 34px;
+    text-align: center;
+    padding-top: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+.modal-body table {
+    width: 85%; }
+.modal-body table td {
+    width: 33%; }
+.modal-body table input[type="button"]:nth-child(1) {
+    text-align: left;
+    border: none;
+    width: 45px;
+    outline: none;
+    margin-bottom: 40px;
+    background: url(./rights.png) no-repeat 30px 3px; }
+.modal-body table input[type="button"]:last-child {
+    text-align: right;
+    border: none;
+    outline: none;
+    width: 45px;
+    background: url(./lefts.png) no-repeat 0px 3px; }
+.modal-body table input[type="button"]:nth-child(1):focus {
+    background: url(./right.png) no-repeat 30px 3px;
+    color: #f23030; }
+.modal-body table input[type="button"]:last-child:focus {
+    background: url(./left.png) no-repeat 0px 3px;
+    color: #f23030; }
+.modal-body table .more {
+    display: inline-block;
+    font-size: 14px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #f23030;
+    padding-top: 10px; }
+
+.modal-footer {
+    text-align: center; }
+.modal-footer button {
+    height: 30px;
+    background: white;
+    width: 80px;
+    border: 1px solid #333;
+    color: #333; }
+.modal-footer button:last-child {
+    background: #1ab394;
+    border:#1ab394;
+    color: white;
+    margin-left: 20px !important; }
+.modal-footer button:first-child:hover {
+    background: white;
+    color: #333;
+    border: 1px solid #333; }

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>流程管理-启动实例</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/hplus/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/hplus/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <!-- jqgrid-->
+    <link href="/hplus/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/hplus/css/plugins/jqgrid/ui.jqgrid.css?0820" rel="stylesheet">
+    <link href="/hplus/css/animate.css" rel="stylesheet">
+    <link href="/hplus/css/style.css?v=4.1.0" rel="stylesheet">
+    <style>
+        /* Additional style to fix warning dialog position */
+        #alertmod_table_list_2 {
+            top: 900px !important;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox ">
+               <!--  <div class="ibox-title panel panel-success panel-heading">
+                    <h5>查询条件</h5>
+                </div> -->
+                <div class="ibox-content">
+                  <!--   <form class="form-horizontal" id="form_" method="post">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">名称：</label>
+                            <div class="col-sm-2">
+                                <input id="processDefName" name="processDefName" placeholder="流程名称" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">分类：</label>
+                            <div class="col-sm-2">
+                                 <select id="category" name="category" class="form-control m-b" >
+						     <option value="">请选择</option>
+                                    <option  th:each="cts,userStat:${actProcessTypes}" th:value="${cts.codeId}" th:text="${cts.name}"></option> 
+                                </select>
+                            </div>
+                              <div class="col-sm-2 pull-left">
+                                <button type="button" class="btn btn-outline btn-primary dim" onclick="queryData();">
+                                    <i class="fa fa-search"></i> 查询
+                                </button>
+                            </div>
+                        </div>
+                    </form> -->
+                    <hr>
+                    <div class="jqGrid_wrapper" style="overflow-x:scroll;">
+                        <table id="table_list_1"></table>
+                        <div id="pager_list_1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="/hplus/js/jquery.min.js?v=2.1.4"></script>
+<script src="/hplus/js/bootstrap.min.js?v=3.3.6"></script>
+<!-- Peity -->
+<script src="/hplus/js/plugins/peity/jquery.peity.min.js"></script>
+<!-- jqGrid -->
+<script src="/hplus/js/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+<script src="/hplus/js/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+<!-- 自定义js -->
+<script src="/hplus/js/content.js?v=1.0.0"></script>
+<script src="/hplus/js/plugins/layer/laydate/laydate.js"></script>
+<!-- Sweet alert -->
+<script src="/hplus/js/plugins/sweetalert/sweetalert.min.js"></script>
+<script src="/hplus/js/plugins/layer/layer.min.js"></script>
+<script src="/js/contentpagelist.js"></script>
+<!-- Page-Level Scripts -->
+<script type="text/javascript">
+    
+
+    var contentPageType ;
+
+    $(document).ready(function () {
+      
+
+        $.jgrid.defaults.styleUI = 'Bootstrap';
+        $("#table_list_1").jqGrid({
+            datatype: "json",
+            url: 'list', //这是数据的请求地址
+            mtype: "POST",
+            height: "550",
+            //autowidth: true,
+            shrinkToFit: false,
+            autoScroll: true,
+            jsonReader: {
+                root: "rows",//数据模型
+                page: "page",//数据页码
+                total: "totalPage",  //数据总页码
+                records: "totalResult",//数据总记录数
+                userdata: "userdata",//数据总记录数
+                repeatitems: false,
+                id: "id"
+            },
+            rowNum: 10,
+            rowList: [10, 20, 50],
+            colNames: [
+                'ID',
+                '任务id',
+                '任务名称',
+                '流程实例id',
+                '处理人',
+                '优先级',
+                '操作'
+                
+            ],
+            colModel: [
+                {name: 'id', index: 'id', hidden: true},
+                {name: 'taskId', index: 'taskId'},
+                {name: 'taskName', index: 'taskName', width: 200},
+                {name: 'processId', index: 'processId', width: 200},
+                {name: 'taskAssigin', index: 'taskAssigin', width: 200},
+                {name: 'priority', index: 'priority', width: 100},
+                {name: '', index: '', formatter: opratorFmatter, width: 360}
+            ],
+            onPaging: function (pgButton) {      //当点击翻页按钮但还为展现数据时触发此事件, 当然这跳转栏输入页
+                //码改变页时也同样触发此事件
+                jQuery("#table_list_1").jqGrid("setGridParam", {url: 'list'});
+            },
+            pager: "#pager_list_1",
+            viewrecords: true,
+            rownumbers: true,
+            hidegrid: false,
+            gridComplete: function () {
+                //当表格所有数据都加载完成，处理统计行数据
+            }
+        });
+    });
+
+    function opratorFmatter(cellvalue, options, rowObject) {
+        var viewBtn = "&nbsp;&nbsp;<button class=\"btn btn-outline btn-info\" type=\"button\"  onclick=\"showActivityPage('" + rowObject.taskId + "')\"><i class=\"fa fa-edit\"></i>&nbsp;流程跟踪</button>&nbsp;&nbsp;";
+        var startFormPage = "&nbsp;&nbsp;<button class=\"btn btn-outline btn-warning\" type=\"button\"  onclick=\"taskHandler('" + rowObject.taskId +"')\"><i class=\"fa fa-edit\"></i>&nbsp;办理任务</button>&nbsp;&nbsp;";
+        return viewBtn + startFormPage ;
+    }
+
+
+    function queryData() {
+        $("#table_list_1").jqGrid('setGridParam', {
+            datatype: 'json',
+            postData: {
+                'processDefName': $("#processDefName").val(),
+                'category': $("#category").val()
+            },
+            page: 1
+        }).trigger("reloadGrid");
+    }
+</script>
+
+</body>
+</html>

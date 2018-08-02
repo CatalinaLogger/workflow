@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订单交易详情</title>
+<link rel="shortcut icon" href="favicon.ico">
+<link href="/hplus/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="/hplus/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+<link href="/hplus/css/plugins/sweetalert/sweetalert.css"
+	rel="stylesheet">
+<!-- jqgrid-->
+<link href="/hplus/css/plugins/jqgrid/ui.jqgrid.css?0820"
+	rel="stylesheet">
+<link href="/hplus/css/animate.css" rel="stylesheet">
+<link href="/hplus/css/style.css?v=4.1.0" rel="stylesheet">
+
+<style>
+/* Additional style to fix warning dialog position */
+#alertmod_table_list_2 {
+	top: 900px !important;
+}
+
+.ui-jqgrid .ui-jqgrid-ftable {
+	table-layout: auto;
+}
+
+.ui-jqgrid tr.footrow td {
+	border: 0;
+}
+
+table {
+	border-spacing: 0;
+	border-collapse: separate;
+}
+</style>
+</head>
+
+<body class="gray-bg">
+       <form class="form-horizontal" id="form_" method="post" action="/process/startProcessInstance">
+	<div class="wrapper wrapper-content  animated fadeInRight">
+		<div class="row">
+			<div class="ibox ">
+				<div class="ibox-content">
+					<div>
+						<div class="modal-dialog  modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">请假</h4>
+								</div>
+								<input type="hidden" id='processId' name="processId" th:value="${processId}">
+								<div class="modal-body">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">*请假类型</label>
+										<div class="col-sm-4">
+											<select id="category" name="category"
+												class="form-control m-b">
+												<option value="-1">请选择</option>
+												<option value="2">病假</option>
+												<option value="3">年假</option>
+												<option value="4">事假</option>
+												<option value="5">婚假</option>
+												<option value="6">丧假</option>
+												<option value="7">产假</option>
+												<option value="8">公出</option>
+												<option value="9">调休</option>
+												<option value="10">工伤</option>
+												<option value="11">陪产假</option>
+											</select>
+										</div>
+										<label class="col-sm-2 control-label">*开始时间</label>
+										<div class="col-sm-4">
+											<input placeholder="开始日期"
+												class="laydate-icon form-control layer-date" id="start_xd" name="start_xd">
+										</div>
+									</div>
+								</div>
+								<div class="modal-body">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">*结束时间：</label>
+										<div class="col-sm-4">
+											<input placeholder="结束日期"
+												class="laydate-icon form-control layer-date" id="end_xd"  name="end_xd">
+										</div>
+										<label class="col-sm-2 control-label">*请假时长</label>
+										<div class="col-sm-4">
+											<input id="day" name="day" class="form-control">
+										</div>
+									</div>
+								</div>
+								<div class="modal-body">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">请假事由：</label>
+										<div class="col-sm-4">
+										<textarea rows="" cols="" id="reason" name="reason" class="form-control"></textarea>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn btn-white" >提交</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+	<!-- 全局js -->
+	<script src="/hplus/js/jquery.min.js?v=2.1.4"></script>
+	<script src="/hplus/js/bootstrap.min.js?v=3.3.6"></script>
+
+
+
+	<!-- Peity -->
+	<script src="/hplus/js/plugins/peity/jquery.peity.min.js"></script>
+
+	<!-- jqGrid -->
+	<script src="/hplus/js/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+	<script src="/hplus/js/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+
+	<!-- 自定义js -->
+	<script src="/hplus/js/content.js?v=1.0.0"></script>
+	<script src="/hplus/js/plugins/layer/laydate/laydate.js"></script>
+	<!-- Sweet alert -->
+	<script src="/hplus/js/plugins/sweetalert/sweetalert.min.js"></script>
+	<script>
+    $(document).ready(function () {
+    	
+        //日期范围限制
+        var start_xd = {
+            elem: '#start_xd',
+            format: 'YYYY-MM-DD',
+            //min: laydate.now(), //设定最小日期为当前日期
+            max: '2099-06-16 23:59:59', //最大日期
+            istime: true,
+            istoday: true,
+            change: function(value, date, endDate){
+               alert(value);
+            }
+        };
+        var end_xd = {
+                elem: '#end_xd',
+                format: 'YYYY-MM-DD',
+                //min: laydate.now(),
+                max: '2099-06-16 23:59:59',
+                istime: true,
+                istoday: false,
+                choose: function (datas) {
+               	 var start_xd=$("#start_xd").val();
+           var days=    	getDays(start_xd,datas);
+           if(days>0){
+        	   $("#day").val(days);
+           }else{
+        	   alert("结束时间不能小于开始时间"); 
+        	   $("#end_xd").val("");
+           }
+           
+               
+                },
+                change: function(value, date, endDate){
+                	 alert(value);
+                }
+            };
+        laydate(start_xd);
+        laydate(end_xd);
+      //sDate1和sDate2是2002-12-18格式  
+        function  getDays(sDate1,  sDate2){   
+               var  aDate,oDate1,oDate2,iDays;
+               aDate  =  sDate1.split("-");  
+               //转换为12-18-2002格式,即时间字符串的格式：月-日-年   
+               oDate1  =  new  Date(aDate[1]  +  '-'  +  aDate[2]  +  '-'  +  aDate[0]);    
+               aDate  =  sDate2.split("-");  
+               oDate2  =  new  Date(aDate[1]  +  '-'  +  aDate[2]  +  '-'  +  aDate[0]); 
+                //把相差的毫秒数转换为天数  
+                 if(oDate1 >=oDate2)  {
+                	 return -1;
+                	 }else{
+                			iDays  =  parseInt(Math.abs(oDate1  -  oDate2)  /  1000  /  60  /  60  /24);  
+                      	  return  iDays;  
+                	 }
+                
+                }
+                 
+             
+        //使用
+});
+    </script>
+</body>
+</html>

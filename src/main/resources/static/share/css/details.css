@@ -1,0 +1,42 @@
+#con_details {
+  width: 91%;
+  min-width: 345px;
+  margin: 0 auto; }
+  #con_details .times {
+    width: 100%;
+    margin-top: 14px; }
+    #con_details .times h2 {
+      line-height: 25px;
+      font-size: 18px;
+      color: #282828; }
+    #con_details .times span {
+      display: inline-block;
+      line-height: 20px;
+      font-size: 14px;
+      color: #787878;
+      margin-top: 8px;
+      margin-bottom: 9px; }
+  #con_details .ban {
+    width: 100%; }
+    #con_details .ban .imgban {
+      width: 100%;
+      height: 194px;
+      background: #D8D8D8;
+      margin-bottom: 17px; }
+    #con_details .ban p {
+      font-size: 14px;
+      color: #585858;
+      margin-bottom: 20px; }
+  #con_details .footer {
+    width: 100%;
+    margin-top: 44px;
+    margin-bottom: 30px; }
+    #con_details .footer span {
+      display: inline-block;
+      font-size: 14px;
+      color: #9F9F9F;
+      margin-right: 26px; }
+      #con_details .footer span img {
+        margin-right: 9px; }
+    #con_details .footer span:last-child {
+      margin-right: 0; }
